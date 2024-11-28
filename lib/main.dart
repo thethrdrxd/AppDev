@@ -1,99 +1,134 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
+void main() {
+  runApp(MyApp());
 }
 
-class _HomePageState extends State<HomePage> {
-  List<Color> circleColors = List.generate(20, (index) => Colors.green.shade300); 
-  List<bool> isBarVisible = List.generate(10, (index) => true); 
-
-  Color getRandomColor() {
-    Random random = Random();
-    return Colors.pink.shade100;
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Column(
-          children: [
-            Container(
-              height: 120,  
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          circleColors[index] = getRandomColor();
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: circleColors[index],  
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-           
-            Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return isBarVisible[index] 
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isBarVisible[index] = false;
-                              });
-                            },
-                            child: Container(
-                              height: 200,
-                              color: Colors.blue.shade100,
-                              child: Center(
-                                child: Text(
-                                  index.toString(), 
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(); 
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      home: StudentListPage(),
     );
   }
 }
 
-void main() {
-  runApp(HomePage());
+class StudentListPage extends StatefulWidget {
+  @override
+  _StudentListPageState createState() => _StudentListPageState();
+}
+
+class _StudentListPageState extends State<StudentListPage> {
+  List<String> students = [];
+
+  void _showAddStudentDialog(BuildContext context) {
+    TextEditingController nameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("ARI PAG ADD SA DEMONYO ANIMAL KA"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: "PANGAN SA DEMONYO"),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("ABORT MISSION"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("EBUTANG ANIMAL"),
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  setState(() {
+                
+                    students.add(nameController.text);
+                  });
+                 //
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 
+  void _deleteStudent(int index) {
+    setState(() {
+      students.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+   //
+      backgroundColor: Color.fromARGB(255, 183, 189, 192), 
+
+      appBar: AppBar(
+        title: Text("LISTA SA MGA ANAK SA TAGA ISRAEL",
+        style: TextStyle(
+          color: Colors.green.shade100,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        )),
+        backgroundColor: Color.fromARGB(255, 44, 45, 46), 
+      ),
+      body: ListView.builder(
+        itemCount: students.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 5,
+              color: Color.fromARGB(255, 153, 178, 152), 
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  onTap: () {
+              
+                    _deleteStudent(index);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center, 
+                    crossAxisAlignment: CrossAxisAlignment.center,  
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "${students[index]}",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,
+                          color:Colors.green.shade900 ),
+                          textAlign: TextAlign.center, 
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddStudentDialog(context),
+        tooltip: 'Add Student',
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 117, 120, 117), 
+      ),
+    );
+  }
 }
